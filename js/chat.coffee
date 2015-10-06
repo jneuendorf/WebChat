@@ -1,12 +1,86 @@
 $(document).ready () ->
-
-    # update chat log height
     overlay = $(".overlay")
+    lockOverlay = $(".lockOverlay")
+    countDown = $(".countDown")
+    unlockInput = lockOverlay.find("input.unlock")
+    unlockBtn = lockOverlay.find("button.unlock")
     chatContainer = $(".chatContainer")
     inputContainer = $(".inputContainer")
+    sendOnEnterCheckbox = $("#sendOnEnter")
 
-
+    lockBtn = $(".lock")
     sendBtn = $(".btn.send")
+    updateAllBtn = $(".btn.updateAll")
+    logoutBtn = $(".btn.logout")
+
+
+    lockScreen = () ->
+        clearTimeout lockTimer
+        countDown.text ""
+        clearInterval lockInterval
+
+        lockOverlay.fadeIn(40)
+        unlockInput.focus()
+        return true
+
+    lockTimer = null
+    lockInterval = null
+    sendOnEnter = true
+
+    inputContainer.find("#message").keyup (evt) ->
+        if lockTimer?
+            clearTimeout lockTimer
+        if lockInterval
+            clearInterval lockInterval
+        msecs = 10000
+        lockTimer = setTimeout lockScreen, msecs
+        lockInterval = setInterval(
+            () ->
+                if msecs > 0
+                    countDown.text(msecs / 1000)
+                    msecs -= 1000
+                else
+                    countDown.text ""
+                    clearInterval lockInterval
+                return true
+            1000
+        )
+
+        if evt.which is 13 and sendOnEnter
+            sendBtn.click()
+            return false
+
+        return true
+
+    sendOnEnterCheckbox.change () ->
+        sendOnEnter = not sendOnEnter
+        return true
+
+
+    lockBtn.click () ->
+        lockScreen()
+        return true
+
+    unlockCallback = (resp) ->
+        if resp is "true"
+            lockOverlay.fadeOut(100)
+            unlockInput.removeClass("error").val("")
+        else
+            unlockInput.addClass("error")
+        return true
+
+    unlockInput.keyup (evt) ->
+        if evt.which is 13
+            $.post "php/api.php?r=unlock", {pw: unlockInput.val()}, (resp) ->
+                return unlockCallback(resp)
+        return true
+    unlockBtn.click () ->
+        $.post "php/api.php?r=unlock", {pw: unlockInput.val()}, (resp) ->
+            return unlockCallback(resp)
+        return true
+
+
+
     sendBtn.click () ->
         textarea = $("#message")
         content = textarea.val()
@@ -28,25 +102,26 @@ $(document).ready () ->
 
         return true
 
-    updateAllBtn = $(".btn.updateAll")
+
     updateAllBtn.click () ->
         # show ajax loader
-        overlay.fadeIn(100)
-        $.post "php/api.php?r=update_all", () ->
-            # break update cycle
-            clearTimeout nextTimeout
-            chatContainer.empty()
-            window.latestTimestamp = null
-            update("update_all")
+        overlay.fadeIn 100, () ->
+            $.post "php/api.php?r=update_all", () ->
+                # break update cycle
+                clearTimeout nextTimeout
+                chatContainer.empty()
+                window.latestTimestamp = null
+                update("update_all")
 
-            # hide ajax loader
-            # 600 is arbitrary...for browser to actually be done
-            overlay.delay(600).fadeOut(100)
+                # hide ajax loader
+                # 600 is arbitrary...for browser to actually be done
+                overlay.delay(600).fadeOut(100)
 
-            return @
+                return @
+            return true
         return true
 
-    logoutBtn = $(".btn.logout")
+
     logoutBtn.click () ->
         $.post "php/api.php?r=logout", () ->
             # break update cycle
@@ -98,7 +173,7 @@ fgFromBg = (hex) ->
 showMessages = (messages) ->
     container = $ ".chatContainer"
 
-    updated = $ """<div class="updated" />"""
+    updated = $ """<div class="row updated" />"""
 
     for message in messages
         alignment = if message.name is $("#name").val() then "right" else "left"
@@ -111,15 +186,6 @@ showMessages = (messages) ->
         else
             bg = "#cccccc"
 
-        # rgb = hexToRgb bg
-        #
-        # # lightness = Math.round(((parseInt(rgb[0], 10) * 299) + (parseInt(rgb[1], 10) * 587) + (parseInt(rgb[2], 10) * 114)) / 1000)
-        # lightness = Math.round( ((rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114)) / 1000 )
-        #
-        # if lightness > 125
-        #     textColor = "black"
-        # else
-        #     textColor = "white"
         textColor = fgFromBg bg
 
         # link detection
@@ -136,7 +202,8 @@ showMessages = (messages) ->
         newMessage = newMessage.join " "
 
 
-        updated.append """<div class="message #{alignment}" style="background-color: #{bg}; color: #{textColor};">
+        # updated.append """<div class="message #{alignment}" style="background-color: #{bg}; color: #{textColor};">
+        updated.append """<div class="col-xs-9 col-md-8 col-lg-7 message #{if alignment is "left" then "" else "col-xs-push-3 col-md-push-4 col-lg-push-5"}" style="background-color: #{bg}; color: #{textColor};">
                                 <div class="name">#{message.name}</div>
                                 <div class="time">#{date.format("HH:mm")}</div>
                                 <div class="content">#{newMessage}</div>
@@ -180,7 +247,7 @@ update = (action = "update") ->
                     message: "...heute noch keine Nachrichten..."
                     timestamp: -1
                 }]
-                $(".name:contains('System')").parent().css "margin-left", 200
+                # $(".name:contains('System')").parent().css "margin-left", 200
                 window.latestTimestamp = -1
                 return true
             return false
@@ -209,7 +276,7 @@ update = (action = "update") ->
 
             for user in users
                 bg = "#" + string_to_color(user)
-                usersDiv.append "<span style='background-color: #{bg}; color: #{fgFromBg(bg)};'>#{user}</span>"
+                usersDiv.append "<span class='label' style='background-color: #{bg}; color: #{fgFromBg(bg)};'>#{user}</span>"
 
             return true
 

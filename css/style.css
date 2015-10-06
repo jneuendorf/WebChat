@@ -1,19 +1,30 @@
-div {
-    font-family: verdana, arial, sans-serif;
+/*INDEX.PHP*/
+#form .input-group {
+    margin-bottom: 10px;
+}
+.wrapper.index {
+    height: 300px;
+    padding-top: 50px;
+    position: relative;
+    top: 10%;
 }
 
+/*CHAT.PHP*/
 .clear {
     clear: both;
 }
 
-
-.login.label {
-    display: inline-block;
-    width: 100px;
+.padded {
+    margin-bottom: 4px;
 }
 
 
-.overlay {
+.wrapper {
+    box-shadow: 0px 0px 20px 4px lightgray;
+}
+
+
+.overlay, .lockOverlay {
     background: url("../img/loader.gif") 50% 50% no-repeat white;
     bottom: 0px;
     display: none;
@@ -24,94 +35,80 @@ div {
     top: 0px;
     z-index: 100;
 }
+.lockOverlay {
+    background: white;
+    cursor: default;
+    opacity: 1;
+}
+
+.lock {
+    background-color: gray;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 40px;
+    height: 57px;
+    left: 48.5%;
+    padding: 9px 6px 8px 10px;
+    position: fixed;
+    width: 57px;
+    top: 3px;
+    z-index: 90;
+}
+.lock:hover {
+    color: lightgray;
+}
+.lock .countDown {
+    color: gray;
+    font-size: 14px;
+    height: 37%;
+    left: 25%;
+    position: absolute;
+    text-align: center;
+    top: 42%;
+    width: 50%;
+    z-index: 100;
+}
+
+input.unlock.error {
+    border-color: red;
+}
 
 
 .inputContainer {
-    /*height: 44px;*/
-    margin: 10px 25% 10px 25%;
     padding: 10px;
     position: relative;
-    text-align: center;
-    width: 50%;
 }
-.inputContainer > * {
-    font-family: verdana, arial, sans-serif;
-    font-size: 20px;
+
+.inputContainer .btn {
+    width: 100%;
 }
 
 .inputContainer .users {
-    /*position: absolute;*/
-    /*left: 10px;*/
-    /*top: 0px;*/
-    margin-bottom: 10px;
     color: gray;
+    margin-bottom: 10px;
+    text-align: center;
 }
 .inputContainer .users span {
-    margin: 0px 5px 0px 5px;
-    border-radius: 6px;
-    padding: 3px;
     text-transform: capitalize;
 }
 
-.inputContainer > .text.message {
-    border: 1px solid gray;
-    border-radius: 10px;
-    height: 140px;
-    outline: none;
-    padding: 8px;
-    width: 79%;
-}
-.inputContainer > .btn.send {
-    position: relative;
-    top: -64px;
-}
-.inputContainer > .btn.updateAll {
-    margin-bottom: 10px;
-}
-
-
-
-.btn {
-  background: #3498db;
-  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-  background-image: -o-linear-gradient(top, #3498db, #2980b9);
-  background-image: linear-gradient(to bottom, #3498db, #2980b9);
-  -webkit-border-radius: 28;
-  -moz-border-radius: 28;
-  border-radius: 28px;
-  border: none;
-  cursor: pointer;
-  font-family: Arial;
-  color: #ffffff;
-  font-size: 20px;
-  outline: none;
-  padding: 10px 20px 10px 20px;
-  text-decoration: none;
-}
-
-.btn:hover {
-  background: #3cb0fd;
-  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-  text-decoration: none;
+#message {
+    height: 146px;
+    margin-bottom: 4px;
 }
 
 
 
 .chatContainer {
     margin-bottom: 40px;
-    overflow: scroll;
+    overflow-y: scroll;
+    padding: 5px 30px 0px 30px;
 }
 
 .chatContainer .updated {
-    /*height: 0px;*/
     display: none;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .chatContainer .message {
@@ -120,15 +117,15 @@ div {
     overflow: scroll;
     padding: 7px;
     position: relative;
-    width: 40%;
+    /*width: 40%;*/
 }
 
-.chatContainer .message.right {
+/*.chatContainer .message.right {
     float: right;
 }
 .chatContainer .message.left {
     float: left;
-}
+}*/
 
 .chatContainer .message .name, .chatContainer .message .time {
     font-size: 9px;

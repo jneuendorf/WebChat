@@ -14,11 +14,11 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
 ?>
 <html>
 <head>
-    <title>WebChat</title>
+    <title>Neuer Tab</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
     <script src="js/moment.min.js" type="text/javascript"></script>
     <script src="js/string_to_color/string_to_color.min.js" type="text/javascript"></script>
     <script src="js/jquery.cssemoticons.min.js" type="text/javascript"></script>
@@ -26,27 +26,77 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
     <script src="js/chat.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="css/jquery.cssemoticons.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" /> -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 
 <div class="overlay"></div>
 
-<div class="chatContainer"></div>
-
-<div class="inputContainer">
-
-    <textarea id="message" class="text message" placeholder="Hier tippen..."></textarea>
-    <input class="btn send" type="button" value="Senden" />
-
-    <hr />
-
-    <div class="users"></div>
-
-    <input class="btn updateAll" type="button" value="Gesamten Verlauf laden" />
-    <br />
-    <input class="btn logout" type="button" value="Logout" />
+<div class="lockOverlay">
+    <div class="row" style="margin-top: 150px;">
+        <div class="col-xs-8 col-md-6 col-lg-4 col-xs-push-2 col-md-push-3 col-lg-push-4">
+            <input class="form-control unlock" type="password" name="unlock" />
+            <div class="row">
+                <div class="col-md-4 col-md-push-4" style="margin-top: 10px; text-align: center;">
+                    <button class="btn btn-primary btn-lg unlock" type="button">Entsperren</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="lock" title="Sperren">
+    <span class="glyphicon glyphicon-lock lock" aria-hidden="true"></span>
+    <div class="countDown">
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="wrapper col-xs-12 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+        <div class="row">
+            <div class="col-xs-12 chatContainer"></div>
+
+            <div class="col-xs-12 col-md-12 inputContainer">
+
+                <div class="row padded">
+                    <div class="col-xs-12 col-md-9">
+                        <textarea id="message" class="form-control text message" placeholder="Hier tippen..."></textarea>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon">
+                                <input id="sendOnEnter" type="checkbox" checked="" />
+                            </span>
+                          <input type="text" class="form-control" disabled="" placeholder="Bei Enter absenden" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-3">
+                        <div class="row">
+                            <div class="col-xs-4 col-md-12">
+                                <button class="btn btn-lg btn-primary padded send" type="button">Senden</button>
+                            </div>
+                            <div class="col-xs-4 col-md-12">
+                                <button class="btn btn-lg btn-default padded updateAll" type="button">Alles laden</button>
+                            </div>
+                            <div class="col-xs-4 col-md-12">
+                                <button class="btn btn-lg btn-danger logout" type="button">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-10 col-md-push-1 users"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
 
 <input type="hidden" id="name" value="<?php echo $_SESSION["name"]; ?>" />
 

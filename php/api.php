@@ -5,7 +5,7 @@ $chatlog_file = "../chatlog.txt";
 $users_file = "../users.txt";
 $delimiter = "<>";
 
-$r = $_GET["r"];
+$r = $_REQUEST["r"];
 
 if($r == "save" and isset($_SESSION["name"]) and $_SESSION["name"] != "") {
     $name = $_POST["n"];
@@ -86,6 +86,14 @@ elseif($r == "logout") {
     $users = file_get_contents($users_file);
     $users = str_replace($_SESSION["name"]."\n", "", $users);
     file_put_contents($users_file, $users."\n", LOCK_EX);
+}
+elseif ($r == "unlock") {
+    if (isset($_POST["pw"]) and sha1($_POST["pw"]) == "ce3c2b6a8880424920c445ce4341f3b8b8801a31") {
+        echo "true";
+    }
+    else {
+        echo "false";
+    }
 }
 
 ?>
