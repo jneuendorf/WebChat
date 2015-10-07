@@ -88,7 +88,8 @@
     });
     unlockInput.keyup(function(evt) {
       if (evt.which === 13) {
-        return unlockScreen();
+        unlockScreen();
+        return false;
       }
       return true;
     });
