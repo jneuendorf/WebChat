@@ -189,11 +189,11 @@ fgFromBg = (hex) ->
 
 showMessages = (messages) ->
     container = $ ".chatContainer"
-
     updated = $ """<div class="row updated" />"""
+    userName = $("#name").val()
 
     for message in messages
-        alignment = if message.name is $("#name").val() then "right" else "left"
+        alignment = if message.name is userName then "right" else "left"
 
         date = moment(message.timestamp, "X")
 
@@ -218,15 +218,22 @@ showMessages = (messages) ->
                 newMessage.push word
         newMessage = newMessage.join " "
 
+        regex = new RegExp("@\\s*#{(("\\" + char) for char in userName).join("")}", "gi")
 
-        # updated.append """<div class="message #{alignment}" style="background-color: #{bg}; color: #{textColor};">
-        updated.append """<div class="col-xs-9 col-md-8 col-lg-7 message #{if alignment is "left" then "" else "col-xs-push-3 col-md-push-4 col-lg-push-5"}" style="background-color: #{bg}; color: #{textColor};">
+        # no username addressing => normal style
+        if not regex.test(newMessage)
+            colClasses = "col-xs-9 col-md-8 col-lg-7 #{if alignment is "left" then "" else "col-xs-push-3 col-md-push-4 col-lg-push-5"}"
+            contentClasses = ""
+        else
+            colClasses = "col-xs-10 col-xs-push-1 message-lg"
+            contentClasses = " content-lg"
+
+        updated.append """<div class="#{colClasses} message" style="background-color: #{bg}; color: #{textColor};">
                                 <div class="name">#{message.name}</div>
                                 <div class="time">#{date.format("HH:mm")}</div>
-                                <div class="content">#{newMessage}</div>
+                                <div class="content#{contentClasses}">#{newMessage}</div>
                             </div>
                             <div class="clear" />"""
-
 
     # append everything to DOM
     container.append updated

@@ -178,12 +178,13 @@
   };
 
   showMessages = function(messages) {
-    var alignment, bg, container, date, i, idx, j, len, len1, message, newMessage, textColor, updated, word, words;
+    var alignment, bg, char, colClasses, container, contentClasses, date, i, idx, j, len, len1, message, newMessage, regex, textColor, updated, userName, word, words;
     container = $(".chatContainer");
     updated = $("<div class=\"row updated\" />");
+    userName = $("#name").val();
     for (i = 0, len = messages.length; i < len; i++) {
       message = messages[i];
-      alignment = message.name === $("#name").val() ? "right" : "left";
+      alignment = message.name === userName ? "right" : "left";
       date = moment(message.timestamp, "X");
       if (!date.isBefore(new Date(), "day")) {
         bg = "#" + string_to_color(message.name);
@@ -204,7 +205,23 @@
         }
       }
       newMessage = newMessage.join(" ");
-      updated.append("<div class=\"col-xs-9 col-md-8 col-lg-7 message " + (alignment === "left" ? "" : "col-xs-push-3 col-md-push-4 col-lg-push-5") + "\" style=\"background-color: " + bg + "; color: " + textColor + ";\">\n    <div class=\"name\">" + message.name + "</div>\n    <div class=\"time\">" + (date.format("HH:mm")) + "</div>\n    <div class=\"content\">" + newMessage + "</div>\n</div>\n<div class=\"clear\" />");
+      regex = new RegExp("@\\s*" + (((function() {
+        var k, len2, results;
+        results = [];
+        for (k = 0, len2 = userName.length; k < len2; k++) {
+          char = userName[k];
+          results.push("\\" + char);
+        }
+        return results;
+      })()).join("")), "gi");
+      if (!regex.test(newMessage)) {
+        colClasses = "col-xs-9 col-md-8 col-lg-7 " + (alignment === "left" ? "" : "col-xs-push-3 col-md-push-4 col-lg-push-5");
+        contentClasses = "";
+      } else {
+        colClasses = "col-xs-10 col-xs-push-1 message-lg";
+        contentClasses = " content-lg";
+      }
+      updated.append("<div class=\"" + colClasses + " message\" style=\"background-color: " + bg + "; color: " + textColor + ";\">\n    <div class=\"name\">" + message.name + "</div>\n    <div class=\"time\">" + (date.format("HH:mm")) + "</div>\n    <div class=\"content" + contentClasses + "\">" + newMessage + "</div>\n</div>\n<div class=\"clear\" />");
     }
     container.append(updated);
     updated.find(".content").emoticonize();

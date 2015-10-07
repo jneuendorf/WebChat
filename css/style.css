@@ -118,15 +118,10 @@ input.unlock.error {
     overflow: scroll;
     padding: 7px;
     position: relative;
-    /*width: 40%;*/
 }
-
-/*.chatContainer .message.right {
-    float: right;
+.chatContainer .message-lg {
+    box-shadow: 0px 0px 10px 0px red;
 }
-.chatContainer .message.left {
-    float: left;
-}*/
 
 .chatContainer .message .name, .chatContainer .message .time {
     font-size: 9px;
@@ -141,4 +136,8 @@ input.unlock.error {
 }
 .chatContainer .message .content {
     margin-top: 15px;
+}
+.chatContainer .message .content-lg {
+    font-size: 16px;
+    font-weight: bold;
 }
