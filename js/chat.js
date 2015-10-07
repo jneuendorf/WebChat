@@ -3,7 +3,7 @@
   var __updateCounter, fgFromBg, hexToRgb, placeholderMessage, showMessages, update;
 
   $(document).ready(function() {
-    var adjustContainerSize, chatContainer, clearTimers, countDown, inputContainer, lockBtn, lockInterval, lockOverlay, lockScreen, lockTimer, logoutBtn, overlay, sendBtn, sendOnEnter, sendOnEnterCheckbox, timeout, unlockBtn, unlockInput, unlockScreen, updateAllBtn, updateTimeInLock;
+    var adjustContainerSize, autoLock, autoLockCheckbox, chatContainer, clearTimers, countDown, inputContainer, lockBtn, lockInterval, lockOverlay, lockScreen, lockTimer, logoutBtn, overlay, sendBtn, sendOnEnter, sendOnEnterCheckbox, startCountdown, timeout, unlockBtn, unlockInput, unlockScreen, updateAllBtn;
     overlay = $(".overlay");
     lockOverlay = $(".lockOverlay");
     countDown = $(".countDown");
@@ -12,6 +12,7 @@
     chatContainer = $(".chatContainer");
     inputContainer = $(".inputContainer");
     sendOnEnterCheckbox = $("#sendOnEnter");
+    autoLockCheckbox = $("#autoLock");
     lockBtn = $(".lock");
     sendBtn = $(".btn.send");
     updateAllBtn = $(".btn.updateAll");
@@ -20,6 +21,7 @@
     lockTimer = null;
     lockInterval = null;
     sendOnEnter = true;
+    autoLock = true;
     clearTimers = function() {
       if (lockTimer != null) {
         clearTimeout(lockTimer);
@@ -36,7 +38,7 @@
       unlockInput.focus();
       return true;
     };
-    updateTimeInLock = function(evt) {
+    startCountdown = function(evt) {
       var msecs;
       if (evt == null) {
         evt = {};
@@ -67,7 +69,9 @@
         if (resp === "true") {
           lockOverlay.fadeOut(100);
           unlockInput.removeClass("error").val("");
-          updateTimeInLock();
+          if (autoLock) {
+            startCountdown();
+          }
         } else {
           unlockInput.addClass("error");
         }
@@ -76,10 +80,20 @@
       return true;
     };
     inputContainer.find("#message").keyup(function(evt) {
-      return updateTimeInLock(evt);
+      if (autoLock) {
+        return startCountdown(evt);
+      }
+      return true;
     });
     sendOnEnterCheckbox.change(function() {
       sendOnEnter = !sendOnEnter;
+      return true;
+    });
+    autoLockCheckbox.change(function() {
+      autoLock = !autoLock;
+      if (!autoLock) {
+        clearTimers();
+      }
       return true;
     });
     lockBtn.click(function() {
@@ -124,7 +138,9 @@
           window.latestTimestamp = null;
           update("update_all");
           overlay.delay(600).fadeOut(100);
-          updateTimeInLock();
+          if (autoLock) {
+            startCountdown();
+          }
           return this;
         });
         return true;
@@ -140,7 +156,9 @@
       return true;
     });
     window.latestTimestamp = null;
-    updateTimeInLock();
+    if (autoLock) {
+      startCountdown();
+    }
     update();
     adjustContainerSize = function() {
       chatContainer.css("height", window.innerHeight - inputContainer.outerHeight() - 60);

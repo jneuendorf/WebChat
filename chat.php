@@ -23,7 +23,7 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
     <script src="js/string_to_color/string_to_color.min.js" type="text/javascript"></script>
     <script src="js/jquery.cssemoticons.min.js" type="text/javascript"></script>
 
-    <script src="js/chat.js" type="text/javascript"></script>
+    <script src="js/chat.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="css/jquery.cssemoticons.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
@@ -64,11 +64,17 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
                 <div class="row padded">
                     <div class="col-xs-12 col-md-9">
                         <textarea id="message" class="form-control text message" placeholder="Hier tippen..."></textarea>
-                        <div class="input-group input-group-sm">
+                        <div class="input-group input-group-sm padded">
                             <span class="input-group-addon">
                                 <input id="sendOnEnter" type="checkbox" checked="" />
                             </span>
-                          <input type="text" class="form-control" disabled="" placeholder="Bei Enter absenden" />
+                          <input type="text" class="form-control" disabled="" value="Bei Enter absenden" />
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-addon">
+                                <input id="autoLock" type="checkbox" checked="" />
+                            </span>
+                          <input type="text" class="form-control" disabled="" value="Chat automatisch sperren" />
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-3">
@@ -109,12 +115,10 @@ else {
 ?>
 <html>
 <head>
-    <meta http-equiv="refresh" content="1.3; URL=index.php" />
+    <meta http-equiv="refresh" content="1; URL=index.php" />
 </head>
 <body>
-
 Ung&uuml;ltige Session! Bitte einloggen!
-
 </body>
 </html>
 <?php

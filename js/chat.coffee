@@ -7,6 +7,7 @@ $(document).ready () ->
     chatContainer = $(".chatContainer")
     inputContainer = $(".inputContainer")
     sendOnEnterCheckbox = $("#sendOnEnter")
+    autoLockCheckbox = $("#autoLock")
 
     lockBtn = $(".lock")
     sendBtn = $(".btn.send")
@@ -19,6 +20,7 @@ $(document).ready () ->
     lockTimer = null
     lockInterval = null
     sendOnEnter = true
+    autoLock = true
 
     clearTimers = () ->
         if lockTimer?
@@ -36,7 +38,7 @@ $(document).ready () ->
         unlockInput.focus()
         return true
 
-    updateTimeInLock = (evt = {}) ->
+    startCountdown = (evt = {}) ->
         clearTimers()
 
         msecs = timeout * 1000
@@ -64,17 +66,26 @@ $(document).ready () ->
             if resp is "true"
                 lockOverlay.fadeOut(100)
                 unlockInput.removeClass("error").val("")
-                updateTimeInLock()
+                if autoLock
+                    startCountdown()
             else
                 unlockInput.addClass("error")
             return true
         return true
 
     inputContainer.find("#message").keyup (evt) ->
-        return updateTimeInLock(evt)
+        if autoLock
+            return startCountdown(evt)
+        return true
 
     sendOnEnterCheckbox.change () ->
         sendOnEnter = not sendOnEnter
+        return true
+
+    autoLockCheckbox.change () ->
+        autoLock = not autoLock
+        if not autoLock
+            clearTimers()
         return true
 
 
@@ -128,7 +139,8 @@ $(document).ready () ->
                 # 600 is arbitrary...for the browser to actually be done
                 overlay.delay(600).fadeOut(100)
 
-                updateTimeInLock()
+                if autoLock
+                    startCountdown()
 
                 return @
             return true
@@ -146,7 +158,8 @@ $(document).ready () ->
 
     window.latestTimestamp = null
 
-    updateTimeInLock()
+    if autoLock
+        startCountdown()
     update()
 
     adjustContainerSize = () ->
