@@ -27,7 +27,6 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
 
     <link rel="stylesheet" type="text/css" href="css/jquery.cssemoticons.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" /> -->
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
@@ -63,18 +62,29 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
 
                 <div class="row padded">
                     <div class="col-xs-12 col-md-9">
-                        <textarea id="message" class="form-control text message" placeholder="Hier tippen..."></textarea>
-                        <div class="input-group input-group-sm padded">
-                            <span class="input-group-addon">
-                                <input id="sendOnEnter" type="checkbox" checked="" />
-                            </span>
-                          <input type="text" class="form-control" disabled="" value="Bei Enter absenden" />
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <textarea id="message" class="form-control text message" placeholder="Hier tippen..."></textarea>
+                            </div>
                         </div>
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-addon">
-                                <input id="autoLock" type="checkbox" checked="" />
-                            </span>
-                          <input type="text" class="form-control" disabled="" value="Chat automatisch sperren" />
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="input-group input-group-sm padded">
+                                    <span class="input-group-addon">
+                                        <input id="sendOnEnter" type="checkbox" checked="" />
+                                    </span>
+                                  <input type="text" class="form-control" disabled="" value="Bei Enter absenden" />
+                                </div>
+
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">
+                                        <input id="autoLock" type="checkbox" checked="" />
+                                    </span>
+                                  <input type="text" class="form-control" disabled="" value="Chat automatisch sperren" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-3">
