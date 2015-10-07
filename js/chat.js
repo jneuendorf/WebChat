@@ -3,7 +3,7 @@
   var __updateCounter, fgFromBg, hexToRgb, placeholderMessage, showMessages, update;
 
   $(document).ready(function() {
-    var chatContainer, countDown, inputContainer, lockBtn, lockInterval, lockOverlay, lockScreen, lockTimer, logoutBtn, overlay, sendBtn, sendOnEnter, sendOnEnterCheckbox, unlockBtn, unlockCallback, unlockInput, updateAllBtn;
+    var adjustContainerSize, chatContainer, clearTimers, countDown, inputContainer, lockBtn, lockInterval, lockOverlay, lockScreen, lockTimer, logoutBtn, overlay, sendBtn, sendOnEnter, sendOnEnterCheckbox, timeout, unlockBtn, unlockInput, unlockScreen, updateAllBtn, updateTimeInLock;
     overlay = $(".overlay");
     lockOverlay = $(".lockOverlay");
     countDown = $(".countDown");
@@ -16,26 +16,33 @@
     sendBtn = $(".btn.send");
     updateAllBtn = $(".btn.updateAll");
     logoutBtn = $(".btn.logout");
-    lockScreen = function() {
-      clearTimeout(lockTimer);
+    timeout = 60;
+    lockTimer = null;
+    lockInterval = null;
+    sendOnEnter = true;
+    clearTimers = function() {
+      if (lockTimer != null) {
+        clearTimeout(lockTimer);
+      }
+      if (lockInterval != null) {
+        clearInterval(lockInterval);
+      }
       countDown.text("");
-      clearInterval(lockInterval);
+      return true;
+    };
+    lockScreen = function() {
+      clearTimers();
       lockOverlay.fadeIn(40);
       unlockInput.focus();
       return true;
     };
-    lockTimer = null;
-    lockInterval = null;
-    sendOnEnter = true;
-    inputContainer.find("#message").keyup(function(evt) {
+    updateTimeInLock = function(evt) {
       var msecs;
-      if (lockTimer != null) {
-        clearTimeout(lockTimer);
+      if (evt == null) {
+        evt = {};
       }
-      if (lockInterval) {
-        clearInterval(lockInterval);
-      }
-      msecs = 10000;
+      clearTimers();
+      msecs = timeout * 1000;
       lockTimer = setTimeout(lockScreen, msecs);
       lockInterval = setInterval(function() {
         if (msecs > 0) {
@@ -52,6 +59,24 @@
         return false;
       }
       return true;
+    };
+    unlockScreen = function() {
+      $.post("php/api.php?r=unlock", {
+        pw: unlockInput.val()
+      }, function(resp) {
+        if (resp === "true") {
+          lockOverlay.fadeOut(100);
+          unlockInput.removeClass("error").val("");
+          updateTimeInLock();
+        } else {
+          unlockInput.addClass("error");
+        }
+        return true;
+      });
+      return true;
+    };
+    inputContainer.find("#message").keyup(function(evt) {
+      return updateTimeInLock(evt);
     });
     sendOnEnterCheckbox.change(function() {
       sendOnEnter = !sendOnEnter;
@@ -61,32 +86,14 @@
       lockScreen();
       return true;
     });
-    unlockCallback = function(resp) {
-      if (resp === "true") {
-        lockOverlay.fadeOut(100);
-        unlockInput.removeClass("error").val("");
-      } else {
-        unlockInput.addClass("error");
-      }
-      return true;
-    };
     unlockInput.keyup(function(evt) {
       if (evt.which === 13) {
-        $.post("php/api.php?r=unlock", {
-          pw: unlockInput.val()
-        }, function(resp) {
-          return unlockCallback(resp);
-        });
+        return unlockScreen();
       }
       return true;
     });
     unlockBtn.click(function() {
-      $.post("php/api.php?r=unlock", {
-        pw: unlockInput.val()
-      }, function(resp) {
-        return unlockCallback(resp);
-      });
-      return true;
+      return unlockScreen(resp);
     });
     sendBtn.click(function() {
       var content, textarea;
@@ -116,6 +123,7 @@
           window.latestTimestamp = null;
           update("update_all");
           overlay.delay(600).fadeOut(100);
+          updateTimeInLock();
           return this;
         });
         return true;
@@ -130,13 +138,17 @@
       });
       return true;
     });
-    chatContainer.css("height", window.innerHeight - inputContainer.outerHeight() - 40);
     window.latestTimestamp = null;
+    updateTimeInLock();
     update();
-    $(window).resize(function() {
-      chatContainer.css("height", window.innerHeight - inputContainer.outerHeight() - 40);
+    adjustContainerSize = function() {
+      chatContainer.css("height", window.innerHeight - inputContainer.outerHeight() - 60);
       return true;
+    };
+    $(window).resize(function() {
+      return adjustContainerSize();
     });
+    adjustContainerSize();
     return true;
   });
 

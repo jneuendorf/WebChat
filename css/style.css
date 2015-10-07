@@ -89,7 +89,8 @@ input.unlock.error {
     margin-bottom: 10px;
     text-align: center;
 }
-.inputContainer .users span {
+.inputContainer .users .label {
+    margin-right: 2px;
     text-transform: capitalize;
 }
 

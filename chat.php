@@ -23,7 +23,7 @@ if(isset($_SESSION["name"]) and $_SESSION["name"] != "") {
     <script src="js/string_to_color/string_to_color.min.js" type="text/javascript"></script>
     <script src="js/jquery.cssemoticons.min.js" type="text/javascript"></script>
 
-    <script src="js/chat.js" type="text/javascript"></script>
+    <script src="js/chat.min.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="css/jquery.cssemoticons.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />

@@ -13,26 +13,33 @@ $(document).ready () ->
     updateAllBtn = $(".btn.updateAll")
     logoutBtn = $(".btn.logout")
 
-
-    lockScreen = () ->
-        clearTimeout lockTimer
-        countDown.text ""
-        clearInterval lockInterval
-
-        lockOverlay.fadeIn(40)
-        unlockInput.focus()
-        return true
+    # seconds till locking happens
+    timeout = 60
 
     lockTimer = null
     lockInterval = null
     sendOnEnter = true
 
-    inputContainer.find("#message").keyup (evt) ->
+    clearTimers = () ->
         if lockTimer?
             clearTimeout lockTimer
-        if lockInterval
+        if lockInterval?
             clearInterval lockInterval
-        msecs = 10000
+        countDown.text ""
+        return true
+
+
+    lockScreen = () ->
+        clearTimers()
+
+        lockOverlay.fadeIn(40)
+        unlockInput.focus()
+        return true
+
+    updateTimeInLock = (evt = {}) ->
+        clearTimers()
+
+        msecs = timeout * 1000
         lockTimer = setTimeout lockScreen, msecs
         lockInterval = setInterval(
             () ->
@@ -52,6 +59,20 @@ $(document).ready () ->
 
         return true
 
+    unlockScreen = () ->
+        $.post "php/api.php?r=unlock", {pw: unlockInput.val()}, (resp) ->
+            if resp is "true"
+                lockOverlay.fadeOut(100)
+                unlockInput.removeClass("error").val("")
+                updateTimeInLock()
+            else
+                unlockInput.addClass("error")
+            return true
+        return true
+
+    inputContainer.find("#message").keyup (evt) ->
+        return updateTimeInLock(evt)
+
     sendOnEnterCheckbox.change () ->
         sendOnEnter = not sendOnEnter
         return true
@@ -61,24 +82,13 @@ $(document).ready () ->
         lockScreen()
         return true
 
-    unlockCallback = (resp) ->
-        if resp is "true"
-            lockOverlay.fadeOut(100)
-            unlockInput.removeClass("error").val("")
-        else
-            unlockInput.addClass("error")
-        return true
 
     unlockInput.keyup (evt) ->
         if evt.which is 13
-            $.post "php/api.php?r=unlock", {pw: unlockInput.val()}, (resp) ->
-                return unlockCallback(resp)
+            return unlockScreen()
         return true
     unlockBtn.click () ->
-        $.post "php/api.php?r=unlock", {pw: unlockInput.val()}, (resp) ->
-            return unlockCallback(resp)
-        return true
-
+        return unlockScreen(resp)
 
 
     sendBtn.click () ->
@@ -114,8 +124,10 @@ $(document).ready () ->
                 update("update_all")
 
                 # hide ajax loader
-                # 600 is arbitrary...for browser to actually be done
+                # 600 is arbitrary...for the browser to actually be done
                 overlay.delay(600).fadeOut(100)
+
+                updateTimeInLock()
 
                 return @
             return true
@@ -131,16 +143,20 @@ $(document).ready () ->
         return true
 
 
-
-    chatContainer.css "height", window.innerHeight - inputContainer.outerHeight() - 40
-
     window.latestTimestamp = null
 
+    updateTimeInLock()
     update()
 
-    $(window).resize () ->
-        chatContainer.css "height", window.innerHeight - inputContainer.outerHeight() - 40
+    adjustContainerSize = () ->
+        # 60 = 40 (margin-bottom) + 20 (padding)
+        chatContainer.css "height", window.innerHeight - inputContainer.outerHeight() - 60
         return true
+
+    $(window).resize () ->
+        return adjustContainerSize()
+
+    adjustContainerSize()
 
     return true
 

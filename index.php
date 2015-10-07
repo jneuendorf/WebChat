@@ -2,13 +2,9 @@
 <head>
     <title>Neuer Tab</title>
     <script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
-    <script src="js/functionsDisplay.js" type="text/javascript"></script>
-    <script src="js/setup.js" type="text/javascript"></script>
 
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-
     <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link rel="stylesheet" type="text/css" href="css/table.css" />
 </head>
 <body style="overflow: hidden;">
 <div class="index wrapper col-xs-10 col-md-8 col-lg-6 col-xs-push-1 col-md-push-2 col-lg-push-3">
