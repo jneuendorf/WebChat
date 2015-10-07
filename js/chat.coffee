@@ -85,7 +85,8 @@ $(document).ready () ->
 
     unlockInput.keyup (evt) ->
         if evt.which is 13
-            return unlockScreen()
+            unlockScreen()
+            return false
         return true
     unlockBtn.click () ->
         return unlockScreen(resp)
