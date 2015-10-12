@@ -76,7 +76,10 @@ $(document).ready () ->
     inputContainer.find("#message").keyup (evt) ->
         if autoLock
             return startCountdown(evt)
-        return true
+
+        if evt.which is 13 and sendOnEnter
+            sendBtn.click()
+        return false
 
     sendOnEnterCheckbox.change () ->
         sendOnEnter = not sendOnEnter

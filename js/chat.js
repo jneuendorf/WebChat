@@ -83,7 +83,10 @@
       if (autoLock) {
         return startCountdown(evt);
       }
-      return true;
+      if (evt.which === 13 && sendOnEnter) {
+        sendBtn.click();
+      }
+      return false;
     });
     sendOnEnterCheckbox.change(function() {
       sendOnEnter = !sendOnEnter;
